@@ -2657,8 +2657,11 @@ static void tcp_force_closed(struct pico_socket *s)
 static void tcp_wakeup_pending(struct pico_socket *s, uint16_t ev)
 {
     struct pico_socket_tcp *t = (struct pico_socket_tcp *) s;
-    if ((t->sock).wakeup)
+    if ((t->sock).wakeup) {
         (t->sock).wakeup(ev, &(t->sock));
+        if (!t->sock.parent)
+            t->sock.ev_pending = 0;
+    }
 }
 
 static int tcp_rst(struct pico_socket *s, struct pico_frame *f)
